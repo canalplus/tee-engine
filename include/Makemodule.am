@@ -1,6 +1,6 @@
 # Public header files for TAs
 
-publicincludedir = $(includedir)/open-tee/public
+publicincludedir = $(includedir)/open-tee
 internalincludedir = $(includedir)/open-tee/internal_api
 
 publicinclude_HEADERS = \
