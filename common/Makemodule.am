@@ -6,7 +6,6 @@ libCommonApi_la_includes = \
 	include/com_protocol.h \
 	include/elf_read.h \
 	include/epoll_wrapper.h \
-	include/h_table.h \
 	include/socket_help.h \
 	include/tee_list.h \
 	include/tee_logging.h
