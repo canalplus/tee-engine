@@ -18,3 +18,5 @@ include common/Makemodule.am
 include manager/Makemodule.am
 include internal_api/Makemodule.am
 include launcher/Makemodule.am
+include include/Makemodule.am
+

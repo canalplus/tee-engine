@@ -1,0 +1,20 @@
+# Public header files for TAs
+
+publicincludedir = $(includedir)/open-tee/public
+internalincludedir = $(includedir)/open-tee/internal_api
+
+publicinclude_HEADERS = \
+	include/tee_internal_api.h
+
+internalinclude_HEADERS = \
+	internal_api/tee_data_types.h \
+	internal_api/tee_memory.h \
+	internal_api/tee_ta_interface.h \
+	internal_api/tee_time_api.h \
+	internal_api/tee_storage_api.h \
+	internal_api/tee_panic.h \
+	internal_api/tee_crypto_api.h \
+	internal_api/tee_bigint.h \
+	internal_api/tee_internal_client_api.h \
+	internal_api/tee_cancellation.h
+
