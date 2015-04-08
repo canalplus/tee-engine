@@ -587,8 +587,8 @@ static int open_shared_mem(const char *name, void **buffer, uint32_t size, bool 
 	if (size == 0)
 		return 0;
 
-	if (isOutput)
-		flag |= O_RDONLY; /* It is an outbuffer only so we just need read access */
+	if (!isOutput)
+		flag |= O_RDONLY; /* It is an inbuffer only so we just need read access */
 	else
 		flag |= O_RDWR;
 
