@@ -4,7 +4,9 @@ publicincludedir = $(includedir)/open-tee
 internalincludedir = $(includedir)/open-tee/internal_api
 
 publicinclude_HEADERS = \
-	include/tee_internal_api.h
+	include/tee_internal_api.h \
+	manager/tee_ta_properties.h
+
 
 internalinclude_HEADERS = \
 	internal_api/tee_data_types.h \
