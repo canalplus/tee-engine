@@ -614,10 +614,6 @@ TEE_Result TEE_GetObjectBufferAttribute(TEE_ObjectHandle object, uint32_t attrib
 		return TEE_ERROR_ITEM_NOT_FOUND;
 	}
 
-	if (buffer == NULL || size == NULL) {
-		OT_LOG(LOG_ERR, "Size or buffer NULL\n");
-		return TEE_ERROR_SHORT_BUFFER;
-	}
 
 	/* Is this buffer attribute */
 	if (is_value_attribute(attributeID)) {
@@ -634,8 +630,10 @@ TEE_Result TEE_GetObjectBufferAttribute(TEE_ObjectHandle object, uint32_t attrib
 
 	/* Attribute found */
 
-	if (object->attrs[attr_index].content.ref.length > *size) {
+	if (buffer == NULL || size == NULL || object->attrs[attr_index].content.ref.length > *size) {
 		OT_LOG(LOG_ERR, "Short buffer\n");
+		if (size != NULL)
+			*size = object->attrs[attr_index].content.ref.length;
 		return TEE_ERROR_SHORT_BUFFER;
 	}
 
