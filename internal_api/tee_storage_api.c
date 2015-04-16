@@ -600,7 +600,7 @@ void TEE_RestrictObjectUsage(TEE_ObjectHandle object, uint32_t objectUsage)
 	if (object == NULL)
 		return;
 
-	object->objectInfo.objectUsage ^= objectUsage;
+	object->objectInfo.objectUsage &= objectUsage;
 }
 
 TEE_Result TEE_GetObjectBufferAttribute(TEE_ObjectHandle object, uint32_t attributeID, void *buffer,
