@@ -1000,7 +1000,7 @@ TEE_Result TEE_CopyObjectAttributes1(TEE_ObjectHandle destObject, TEE_ObjectHand
 
 	destObject->objectInfo.handleFlags |= TEE_HANDLE_FLAG_INITIALIZED;
 
-	return TEE_SUCCESS:
+	return TEE_SUCCESS;
 }
 
 void TEE_CopyObjectAttributes(TEE_ObjectHandle destObject, TEE_ObjectHandle srcObject)
