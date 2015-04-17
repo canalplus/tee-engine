@@ -594,7 +594,7 @@ TEE_Result TEE_GetObjectInfo1(TEE_ObjectHandle object, TEE_ObjectInfo *objectInf
 	else
 		objectInfo->objectSize = 0;
 
-	return TEE_SUCCESS:
+	return TEE_SUCCESS;
 }
 
 void TEE_GetObjectInfo(TEE_ObjectHandle object, TEE_ObjectInfo *objectInfo)
