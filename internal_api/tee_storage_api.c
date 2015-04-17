@@ -569,10 +569,10 @@ static uint32_t key_raw_size(uint32_t objectType, uint32_t key)
 *												 *
 ************************************************************************************************/
 
-void TEE_GetObjectInfo(TEE_ObjectHandle object, TEE_ObjectInfo *objectInfo)
+TEE_Result TEE_GetObjectInfo1(TEE_ObjectHandle object, TEE_ObjectInfo *objectInfo)
 {
 	if (object == NULL || objectInfo == NULL)
-		return;
+		return TEE_ERROR_CORRUPT_OBJECt;
 
 	memcpy(objectInfo, &object->objectInfo, sizeof(TEE_ObjectInfo));
 
@@ -593,15 +593,31 @@ void TEE_GetObjectInfo(TEE_ObjectHandle object, TEE_ObjectInfo *objectInfo)
 		objectInfo->objectSize = object_attribute_size(object);
 	else
 		objectInfo->objectSize = 0;
+
+	return TEE_SUCCESS:
+}
+
+void TEE_GetObjectInfo(TEE_ObjectHandle object, TEE_ObjectInfo *objectInfo)
+{
+	TEE_GetObjectInfo1(object, objectInfo);
+}
+
+
+TEE_Result TEE_RestrictObjectUsage1(TEE_ObjectHandle object, uint32_t objectUsage)
+{
+	if (object == NULL)
+		return TEE_ERROR_CORRUPT_OBJECT;
+
+	object->objectInfo.objectUsage &= objectUsage;
+
+	return TEE_SUCCESS;
 }
 
 void TEE_RestrictObjectUsage(TEE_ObjectHandle object, uint32_t objectUsage)
 {
-	if (object == NULL)
-		return;
-
-	object->objectInfo.objectUsage &= objectUsage;
+	TEE_RestrictObjectUsage1(object, objectUsage);
 }
+
 
 TEE_Result TEE_GetObjectBufferAttribute(TEE_ObjectHandle object, uint32_t attributeID, void *buffer,
 					size_t *size)
@@ -934,29 +950,29 @@ void TEE_InitValueAttribute(TEE_Attribute *attr, uint32_t attributeID, uint32_t 
 	attr->content.value.b = b;
 }
 
-void TEE_CopyObjectAttributes(TEE_ObjectHandle destObject, TEE_ObjectHandle srcObject)
+TEE_Result TEE_CopyObjectAttributes1(TEE_ObjectHandle destObject, TEE_ObjectHandle srcObject)
 {
 	uint32_t dest_index = 0;
 
 	if (destObject == NULL || srcObject == NULL)
-		return;
+		return TEE_ERROR_CORRUPT_OBJECT;
 
 	if (destObject->objectInfo.handleFlags & TEE_HANDLE_FLAG_INITIALIZED ||
 	    !(srcObject->objectInfo.handleFlags & TEE_HANDLE_FLAG_INITIALIZED)) {
 		OT_LOG(LOG_ERR, "Dest object initalized and source object is uninitialized\n");
-		TEE_Panic(TEE_ERROR_BAD_STATE);
+		return TEE_ERROR_BAD_STATE;
 	}
 
 	if (srcObject->maxObjSizeBytes > destObject->maxObjSizeBytes) {
 		OT_LOG(LOG_ERR, "Problem with destination and source object size\n");
-		TEE_Panic(TEE_ERROR_BAD_PARAMETERS);
+		return TEE_ERROR_BAD_PARAMETERS;
 	}
 
 	/* Copy attributes, if possible */
 	if (destObject->objectInfo.objectType == srcObject->objectInfo.objectType) {
 		if (srcObject->attrs_count != destObject->attrs_count) {
 			OT_LOG(LOG_ERR, "Can't copy objs, because attribute count do not match\n");
-			TEE_Panic(TEE_ERROR_BAD_PARAMETERS);
+			return TEE_ERROR_BAD_PARAMETERS;
 		}
 
 		copy_all_attributes(srcObject, destObject);
@@ -966,7 +982,7 @@ void TEE_CopyObjectAttributes(TEE_ObjectHandle destObject, TEE_ObjectHandle srcO
 		if (!copy_attr_from_obj_to_obj(srcObject, TEE_ATTR_RSA_MODULUS, destObject, dest_index++) ||
 		    !copy_attr_from_obj_to_obj(srcObject, TEE_ATTR_RSA_PUBLIC_EXPONENT, destObject, dest_index++)) {
 			OT_LOG(LOG_ERR, "Can not copy objects, because something went wrong\n");
-			TEE_Panic(TEE_ERROR_BAD_PARAMETERS);
+			return TEE_ERROR_BAD_PARAMETERS;
 		}
 	} else if (destObject->objectInfo.objectType == TEE_TYPE_DSA_PUBLIC_KEY &&
 		   srcObject->objectInfo.objectType == TEE_TYPE_DSA_KEYPAIR) {
@@ -975,14 +991,23 @@ void TEE_CopyObjectAttributes(TEE_ObjectHandle destObject, TEE_ObjectHandle srcO
 		    !copy_attr_from_obj_to_obj(srcObject, TEE_ATTR_DSA_BASE, destObject, dest_index++) ||
 		    !copy_attr_from_obj_to_obj(srcObject, TEE_ATTR_DSA_PRIME, destObject, dest_index++)) {
 			OT_LOG(LOG_ERR, "Can not copy objects, because something went wrong\n");
-			TEE_Panic(TEE_ERROR_BAD_PARAMETERS);
+			return TEE_ERROR_BAD_PARAMETERS;
 		}
 	} else {
 		OT_LOG(LOG_ERR, "Error in copying attributes: Problem with compatibles\n");
-		TEE_Panic(TEE_ERROR_BAD_PARAMETERS);
+		return TEE_ERROR_BAD_PARAMETERS;
 	}
 
 	destObject->objectInfo.handleFlags |= TEE_HANDLE_FLAG_INITIALIZED;
+
+	return TEE_SUCCESS:
+}
+
+void TEE_CopyObjectAttributes(TEE_ObjectHandle destObject, TEE_ObjectHandle srcObject)
+{
+	TEE_Result rc;
+	if ((rc = TEE_CopyObjectAttributes1(destObject, srcObject)) != TEE_SUCCESS)
+		TEE_Panic(rc);
 }
 
 TEE_Result TEE_GenerateKey(TEE_ObjectHandle object, uint32_t keySize, TEE_Attribute *params,

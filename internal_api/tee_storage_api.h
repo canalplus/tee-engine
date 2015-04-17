@@ -117,11 +117,26 @@ typedef struct __TEE_ObjectEnumHandle* TEE_ObjectEnumHandle;
 void TEE_GetObjectInfo(TEE_ObjectHandle object, TEE_ObjectInfo *objectInfo);
 
 /*!
+ * \brief TEE_GetObjectInfo
+ * \param object
+ * \param objectInfo
+ */
+TEE_Result TEE_GetObjectInfo1(TEE_ObjectHandle object, TEE_ObjectInfo *objectInfo);
+
+/*!
  * \brief TEE_RestrictObjectUsage
  * \param object
  * \param objectUsage
  */
 void TEE_RestrictObjectUsage(TEE_ObjectHandle object, uint32_t objectUsage);
+
+/*!
+ * \brief TEE_RestrictObjectUsage1
+ * \param object
+ * \param objectUsage
+ * \return
+ */
+TEE_Result TEE_RestrictObjectUsage1(TEE_ObjectHandle object, uint32_t objectUsage);
 
 /*!
  * \brief TEE_GetObjectBufferAttribute
@@ -211,6 +226,14 @@ void TEE_InitValueAttribute(TEE_Attribute *attr, uint32_t attributeID, uint32_t 
  * \param srcObject
  */
 void TEE_CopyObjectAttributes(TEE_ObjectHandle destObject, TEE_ObjectHandle srcObject);
+
+/*!
+ * \brief TEE_CopyObjectAttributes
+ * \param destObject
+ * \param srcObject
+ * \return
+ */
+TEE_Result TEE_CopyObjectAttributes1(TEE_ObjectHandle destObject, TEE_ObjectHandle srcObject);
 
 /*!
  * \brief TEE_GenerateKey
