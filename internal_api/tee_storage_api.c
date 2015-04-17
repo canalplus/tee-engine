@@ -572,7 +572,7 @@ static uint32_t key_raw_size(uint32_t objectType, uint32_t key)
 TEE_Result TEE_GetObjectInfo1(TEE_ObjectHandle object, TEE_ObjectInfo *objectInfo)
 {
 	if (object == NULL || objectInfo == NULL)
-		return TEE_ERROR_CORRUPT_OBJECt;
+		return TEE_ERROR_CORRUPT_OBJECT;
 
 	memcpy(objectInfo, &object->objectInfo, sizeof(TEE_ObjectInfo));
 
